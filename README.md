@@ -8,7 +8,7 @@ CityRescue is an App for connecting victims of natural disaster who needs help w
 
 With Git:
 ```
-git clone https://github.com/okeyonyia123/CityRescue.git
+$ git clone https://github.com/okeyonyia123/CityRescue.git
 ```
 With Go:
 
@@ -19,11 +19,11 @@ $ go get https://github.com/okeyonyia123/CityRescue.git
 ## Running the Application on your local machine
 
 ```
-go run cityrescue.go
+$ go run cityrescue.go
 ```
 
 # MAIN Executable Go package
 
 ### cityrescue.go
-  - func main()
+  - **func main()**
     - This is where all the routing starts
