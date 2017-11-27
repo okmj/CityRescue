@@ -1,9 +1,13 @@
 package handlers
 
 import (
+	"fmt"
+	"log"
 	"net/http"
 
-	"github.com/EngineerKamesh/gofullstack/volume2/section3/gopherfaceform/validationkit"
+	"github.com/okeyonyia123/cityrescue/models"
+	"github.com/okeyonyia123/cityrescue/shared"
+	"github.com/okeyonyia123/cityrescue/validationkit"
 )
 
 type SignUpForm struct {
@@ -35,7 +39,7 @@ func PopulateFormFields(r *http.Request, s *SignUpForm) {
 }
 
 // ValidateSignUpForm validates the Sign Up form's fields
-func ValidateSignUpForm(w http.ResponseWriter, r *http.Request, s *SignUpForm) {
+func ValidateSignUpForm(w http.ResponseWriter, r *http.Request, s *SignUpForm, env *shared.Env) {
 
 	PopulateFormFields(r, s)
 	// Check if username was filled out
@@ -97,38 +101,52 @@ func ValidateSignUpForm(w http.ResponseWriter, r *http.Request, s *SignUpForm) {
 	if len(s.Errors) > 0 {
 		DisplaySignUpForm(w, r, s)
 	} else {
-		ProcessSignUpForm(w, r, s)
+		ProcessSignUpForm(w, r, s, env)
 	}
 
 }
 
 // ProcessSignUpForm
-func ProcessSignUpForm(w http.ResponseWriter, r *http.Request, s *SignUpForm) {
+func ProcessSignUpForm(w http.ResponseWriter, r *http.Request, s *SignUpForm, env *shared.Env) {
 
-	// If we reached this point, that indicates that we had a successful form submission.
-	// Later, we will include form processing logic here, in this case that would be
-	// inserting the information from the form as an entry into the database.
+	// Now at this point, it means form submission is succefull so lets pass it into the DATABASE
+	u := models.NewUser(r.FormValue("username"), r.FormValue("firstName"), r.FormValue("lastName"), r.FormValue("email"), r.FormValue("password"))
+	fmt.Println("user: ", u)
+	err := env.DB.CreateUser(u)
+
+	if err != nil {
+		log.Print(err)
+	}
+
+	user, err := env.DB.GetUser("kruti")
+	if err != nil {
+		log.Print(err)
+	} else {
+		fmt.Printf("Fetch User Result: %+v\n", user)
+	}
 
 	// Display form confirmation message
 	DisplayConfirmation(w, r, s)
 
 }
 
-func SignUpHandler(w http.ResponseWriter, r *http.Request) {
+func SignUpHandler(env *shared.Env) http.Handler {
+	return http.HandlerFunc(func(resp http.ResponseWriter, req *http.Request) {
+		s := SignUpForm{}
+		s.FieldNames = []string{"username", "firstName", "lastName", "email"}
+		s.Fields = make(map[string]string)
+		s.Errors = make(map[string]string)
 
-	s := SignUpForm{}
-	s.FieldNames = []string{"username", "firstName", "lastName", "email"}
-	s.Fields = make(map[string]string)
-	s.Errors = make(map[string]string)
+		switch req.Method {
 
-	switch r.Method {
+		case "GET":
+			DisplaySignUpForm(resp, req, &s)
+		case "POST":
+			ValidateSignUpForm(resp, req, &s, env)
+		default:
+			DisplaySignUpForm(resp, req, &s)
+		}
 
-	case "GET":
-		DisplaySignUpForm(w, r, &s)
-	case "POST":
-		ValidateSignUpForm(w, r, &s)
-	default:
-		DisplaySignUpForm(w, r, &s)
-	}
+	})
 
 }
