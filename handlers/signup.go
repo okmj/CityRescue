@@ -112,10 +112,15 @@ func ProcessSignUpForm(w http.ResponseWriter, r *http.Request, s *SignUpForm, en
 	// Now at this point, it means form submission is succefull so lets pass it into the DATABASE
 	u := models.NewUser(r.FormValue("username"), r.FormValue("firstName"), r.FormValue("lastName"), r.FormValue("email"), r.FormValue("password"))
 	fmt.Println("user: ", u)
+	//fmt.Println("Here where the error occured")
+	fmt.Println(env)
+
 	err := env.DB.CreateUser(u)
 
 	if err != nil {
+		//fmt.Println("Here where the error occured")
 		log.Print(err)
+
 	}
 
 	user, err := env.DB.GetUser("kruti")
@@ -129,7 +134,6 @@ func ProcessSignUpForm(w http.ResponseWriter, r *http.Request, s *SignUpForm, en
 	DisplayConfirmation(w, r, s)
 
 }
-
 func SignUpHandler(env *shared.Env) http.Handler {
 	return http.HandlerFunc(func(resp http.ResponseWriter, req *http.Request) {
 		s := SignUpForm{}

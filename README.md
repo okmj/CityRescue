@@ -8,7 +8,7 @@ CityRescue is an App for connecting victims of natural disaster who needs help w
 
 With Git:
 ```
-$ git clone github.com/okeyonyia123/CityRescue
+$ git clone https://github.com/okeyonyia123/CityRescue.git
 ```
 With Go:
 

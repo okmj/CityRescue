@@ -1,0 +1,38 @@
+//Pull a mysql image
+$docker pull mysql
+
+//Spin up the mysql image on a container
+$ docker run -p3306:3306 --name cityrescuemysql -e MYSQL_ROOT_PASSWORD=choosepassword -d mysql
+
+//connect to the running mysql container with a client and link them
+
+$ docker run -it --link cityrescuemysql:mysql --rm mysql sh -c 'exec mysql -h"$MYSQL_PORT_3306_TCP_ADDR" -P"$MYSQL_PORT_3306_TCP_PORT" -uroot -p"cityrescue"'
+
+//Create a new Database User using a DDL - Database Definition Language
+//Notice we ssh into mysql container already
+mysql> CREATE USER 'cityrescue'@'%' IDENTIFIED BY 'cityrescue';
+
+//CReate a new Database called cityrescue
+mysql> CREATE DATABASE IF NOT EXISTS `cityrescue` DEFAULT CHARACTER SET `utf8` COLLATE `utf8_unicode_ci`;
+
+//Then Grent privilleges to the database user created earlier called cityrescue on database called cityrescue
+
+mysql> GRANT ALL PRIVILEGES ON cityrescue.* TO 'cityrescue'@'%';
+
+//Flush the privileges so our changes to the privileges will take effect immidiately
+mysql> FLUSH PRIVILEGES;
+
+//Now, write sql querry to create a table and also create the attributes of the table.
+//Do this in a sql script in your work directories. cityrescue.sql
+
+//After you are done creating the sql script, copy the script from the working directory to the running client container
+
+$ docker cp cityrescue.sql naughty_morse:/tmp/.
+
+//Now the sql script is running on the mysql client which we ssh into, we can run the script with the source command to execute it
+
+mysql> source /tmp/cityrescue.sql
+
+// Go ahead and run the Describe table command to see the database table structure
+
+mysql> desc user; //Here, user is the name of the table inside the sql script we ran to create a table

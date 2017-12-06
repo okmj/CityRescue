@@ -23,8 +23,8 @@ func NewDatastore(datastoreType int, dbConnectionString string) (Datastore, erro
 	switch datastoreType {
 	case MYSQL:
 		return NewMySQLDS(dbConnectionString)
-	//case MONGODB:
-	//return NewMongoDBDatastore(dbConnectionString)
+	case MONGODB:
+		return NewMongoDBDatastore(dbConnectionString)
 	//case REDIS:
 	//return NewRedisDatastore(dbConnectionString)
 	default:
