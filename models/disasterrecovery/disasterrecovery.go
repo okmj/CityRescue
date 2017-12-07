@@ -1,4 +1,3 @@
-// Package SocialMedia implements common functionality needed for social media web applications.
 package disasterrecovery
 
 import (
