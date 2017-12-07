@@ -62,11 +62,10 @@ func main() {
 	r.HandleFunc("/restapi/disasterrecovery/{postid}", endpoints.UpdatePostEndpoint).Methods("PUT")
 	r.HandleFunc("/restapi/disasterrecovery/{postid}", endpoints.DeletePostEndpoint).Methods("DELETE")
 
-	//http.Handle("/", r)
-	//http.Handle("/", ghandlers.LoggingHandler(os.Stdout, r))
-	//http.Handle("/", middleware.PanicRecoveryHandler(ghandlers.LoggingHandler(os.Stdout, r)))
+	// Clean Logging of server activities and performance
 	http.Handle("/", middleware.ContextExampleHandler(middleware.PanicRecoveryHandler(ghandlers.LoggingHandler(os.Stdout, r))))
 
+	//Starting the server on port 8080
 	http.ListenAndServe(WEBSERVERPORT, nil)
 
 }
