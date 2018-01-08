@@ -8,7 +8,12 @@ import (
 
 type Datastore interface {
 	CreateUser(user *models.User) error
+	CreateHelper(user *models.User) error
 	GetUser(username string) (*models.User, error)
+	GetHelper(username string) (*models.User, error)
+	CreatePost(post *models.Post) error
+	GetPost(username string) (*[]models.Post, error)
+	GetAllPost() (*[]models.Post, error)
 	Close()
 }
 

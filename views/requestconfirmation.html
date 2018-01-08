@@ -1,0 +1,25 @@
+<html>
+<head>
+<title></title>
+<link rel="stylesheet" type="text/css" href="/static/css/pure.css" />
+<link rel="stylesheet" type="text/css" href="/static/css/cityrescue.css" />
+<link  href="https://fonts.googleapis.com/css?family=Lobster:regular" rel="stylesheet" type="text/css" >
+</head>
+<body>
+
+<div id="sitelogo">CityRescue</div>
+
+<div id="navigationBar">
+<ul>
+	<li><a href="/request/{{.Fields.username}}">Request</a></li>
+	<li><a href="/restapi/disasterrecovery/allrequests/{{.Fields.username}}">All Requests</a></li>
+	<li><a href="/profile">Profile</a></li>
+	<li id="logout_item"><a href="/logout">Log Out</a></li>
+
+</ul>
+</li>
+	<h1>CityRescue - Request Confirmation</h1>
+
+	<p>Thank you {{.Fields.firstName}}!</p>
+	<p>Your Request has been posted for Helpers in Category {{.Fields.category}}!</p>
+	<p>You will be notified once A Helper Accepts Your Request</p>

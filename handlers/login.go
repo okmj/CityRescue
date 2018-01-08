@@ -5,6 +5,7 @@ import (
 	"log"
 	"net/http"
 
+	"github.com/okeyonyia123/cityrescue/models"
 	"github.com/okeyonyia123/cityrescue/shared"
 	"github.com/okeyonyia123/cityrescue/shared/authenticate"
 	"github.com/okeyonyia123/cityrescue/shared/util"
@@ -68,30 +69,59 @@ func ValidateLoginForm(w http.ResponseWriter, r *http.Request, l *LoginForm, e *
 
 // ProcessLoginForm
 func ProcessLoginForm(w http.ResponseWriter, r *http.Request, l *LoginForm, e *shared.Env) {
+	var authResult bool
+	if "victim" == r.FormValue("type") {
+		fmt.Printf("a Victim is Logging In")
+		authResult = authenticate.VerifyCredentials(e, r.FormValue("username"), r.FormValue("password"))
+		fmt.Println("auth result: ", authResult)
 
-	authResult := authenticate.VerifyCredentials(e, r.FormValue("username"), r.FormValue("password"))
-	fmt.Println("auth result: ", authResult)
+	} else {
+		fmt.Printf("a Helper is Logging In")
+		authResult = authenticate.VerifyHelperCredentials(e, r.FormValue("username"), r.FormValue("password"))
+		fmt.Println("auth result: ", authResult)
+	}
 
-	// Successful login, let's create a cookie for the user and redirect them to the feed route
-	if authResult == true {
+	verifyAuth := authResult
+
+	fmt.Println("verifyAuth : ", verifyAuth)
+
+	// Successful login, let's create a cookie for the user and redirect them to the request route
+	if verifyAuth == true {
 
 		sessionID := util.GenerateUUID()
 		fmt.Println("sessid: ", sessionID)
-		u, err := e.DB.GetUser(r.FormValue("username"))
-		if err != nil {
-			log.Print("Encountered error when attempting to fetch user record: ", err)
-			http.Redirect(w, r, "/login", 302)
-			return
+
+		var u *models.User
+		var err error
+		if "victim" == r.FormValue("type") {
+			u, err = e.DB.GetUser(r.FormValue("username"))
+			if err != nil {
+				log.Print("Encountered error when attempting to fetch user record: ", err)
+				http.Redirect(w, r, "/login", 302)
+				return
+			}
+
+		} else {
+			u, err = e.DB.GetHelper(r.FormValue("username"))
+			if err != nil {
+				log.Print("Encountered error when attempting to fetch user record: ", err)
+				http.Redirect(w, r, "/login", 302)
+				return
+			}
+
 		}
 
-		err = authenticate.CreateSecureCookie(u, sessionID, w, r)
-		if err != nil {
-			log.Print("Encountered error when attempting to create secure cookie: ", err)
-			http.Redirect(w, r, "/login", 302)
-			return
+		/*
+			err = authenticate.CreateSecureCookie(u, sessionID, w, r)
+			if err != nil {
+				log.Print("Encountered error when attempting to create secure cookie: ", err)
+				//http.Redirect(w, r, "/login", 302)
+				//return
 
-		}
+			}
+		*/
 
+		//Create a Session for that user
 		err = authenticate.CreateUserSession(u, sessionID, w, r)
 		if err != nil {
 			log.Print("Encountered error when attempting to create user session: ", err)
@@ -100,7 +130,19 @@ func ProcessLoginForm(w http.ResponseWriter, r *http.Request, l *LoginForm, e *s
 
 		}
 
-		http.Redirect(w, r, "/feed", 302)
+		//Let us decide what page to serve
+		var addrs string
+
+		if "victim" == r.FormValue("type") {
+			uname := l.Fields["username"]
+			addrs = "/request/" + uname
+		} else {
+			uname := l.Fields["username"]
+			addrs = "/helper/" + uname
+		}
+
+		//RenderTemplate(w, "./views/request.html", l)
+		http.Redirect(w, r, addrs, 302)
 
 	} else {
 

@@ -17,14 +17,14 @@ import (
 )
 
 const (
-	WEBSERVERPORT = ":8080"
+	WEBSERVERPORT = ":8084"
 )
 
 func main() {
 
 	//Connect To DATABASE
 	//db, err := datastore.NewDatastore(datastore.MYSQL, "cityrescue:cityrescue@/cityrescue")
-	db, err := datastore.NewDatastore(datastore.MONGODB, "192.168.43.229:27017")
+	db, err := datastore.NewDatastore(datastore.MONGODB, "159.203.92.34:27017")
 	fmt.Println(db)
 
 	if err != nil {
@@ -46,7 +46,13 @@ func main() {
 
 	r.Handle("/signup", handlers.SignUpHandler(&env)).Methods("GET", "POST")
 	r.Handle("/login", handlers.LoginHandler(&env)).Methods("GET", "POST")
-	r.HandleFunc("/logout", handlers.LogoutHandler).Methods("POST")
+	r.HandleFunc("/logout", handlers.LogoutHandler).Methods("GET", "POST")
+
+	//gated Resources for only logged in Users
+	r.HandleFunc("/request/{username}", handlers.RequestHandler).Methods("GET", "POST")
+	r.HandleFunc("/helper/{username}", handlers.HelperHandler).Methods("GET", "POST")
+	r.Handle("/profile", middleware.GatedContentHandler(handlers.MyProfileHandler)).Methods("GET")
+	r.Handle("/profile/{username}", middleware.GatedContentHandler(handlers.ProfileHandler)).Methods("GET")
 
 	r.HandleFunc("/profile", handlers.MyProfileHandler).Methods("GET")
 	r.HandleFunc("/profile/{username}", handlers.ProfileHandler).Methods("GET")
@@ -57,13 +63,20 @@ func main() {
 	r.PathPrefix("/bootstrap/").Handler(http.StripPrefix("/bootstrap/", http.FileServer(http.Dir("./bootstrap"))))
 	r.PathPrefix("/static/").Handler(http.StripPrefix("/static/", http.FileServer(http.Dir("./static"))))
 
-	r.HandleFunc("/restapi/disasterrecovery/{username}", endpoints.FetchPostsEndpoint).Methods("GET")
-	r.HandleFunc("/restapi/disasterrecovery/{postid}", endpoints.CreatePostEndpoint).Methods("POST")
+	//RESTAPI
+	r.Handle("/restapi/disasterrecovery/request", endpoints.CreateRequestEndPoint(&env)).Methods("POST")
+	r.Handle("/restapi/disasterrecovery/allrequests/{username}", endpoints.GetRequestEndPoint(&env)).Methods("GET")
+	r.Handle("/restapi/disasterrecovery/pendingrequests/{{.username}}", endpoints.GetPendingRequestEndPoint(&env)).Methods("GET")
 	r.HandleFunc("/restapi/disasterrecovery/{postid}", endpoints.UpdatePostEndpoint).Methods("PUT")
 	r.HandleFunc("/restapi/disasterrecovery/{postid}", endpoints.DeletePostEndpoint).Methods("DELETE")
 
 	// Clean Logging of server activities and performance
 	http.Handle("/", middleware.ContextExampleHandler(middleware.PanicRecoveryHandler(ghandlers.LoggingHandler(os.Stdout, r))))
+
+	//Authentication middleware
+	//loggedRouter := ghandlers.LoggingHandler(os.Stdout, r)
+	//stdChain := alice.New(middleware.PanicRecoveryHandler)
+	//http.Handle("/", stdChain.Then(loggedRouter))
 
 	//Starting the server on port 8080
 	http.ListenAndServe(WEBSERVERPORT, nil)

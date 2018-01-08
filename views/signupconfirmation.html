@@ -1,15 +1,27 @@
 <html>
 <head>
-<title>CityRescue - Sign Up Confirmation</title>
+<title>CityRescue - </title>
+<link rel="stylesheet" type="text/css" href="/static/css/pure.css" />
 <link rel="stylesheet" type="text/css" href="/static/css/cityrescue.css" />
+<link  href="https://fonts.googleapis.com/css?family=Lobster:regular" rel="stylesheet" type="text/css" >
 </head>
 <body>
+
+<div id="sitelogo">CityRescue</div>
+
+<div id="navigationBar">
+<ul>
+	<li><a href="/home">Home</a></li>
+	<li><a href="/about">About</a></li>
+	<li><a href="/contactus">Contact Us</a></li>
+	<li id="logout_item"><a href="/login">Sign in</a></li>
+
+</ul>
+</li>
+
 	<h1>CityRescue - Sign Up Confirmation</h1>
 
 
 	<p>Thank you {{.Fields.firstName}}!</p>
 	<p>We have received your form submission!</p>
-
-
-</body>
-</html>
+	<a href="login"><p>Sign in Here</p></a>

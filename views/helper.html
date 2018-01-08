@@ -1,0 +1,66 @@
+<html>
+<head>
+<title>CityRescue - {{.PageTitle}}</title>
+<link rel="stylesheet" type="text/css" href="/static/css/pure.css" />
+<link rel="stylesheet" type="text/css" href="/static/css/cityrescue.css" />
+<link  href="https://fonts.googleapis.com/css?family=Lobster:regular" rel="stylesheet" type="text/css" >
+</head>
+<body>
+
+<div id="sitelogo">CityRescue</div>
+
+<div id="navigationBar">
+<ul>
+	<li><a href="/helper/{{.username}}">Request</a></li>
+	<li><a href="/restapi/disasterrecovery/pendingrequests/{{.username}}">Pending Requests</a></li>
+	<li><a href="#">Profile</a></li>
+	<li id="logout_item"><a href="/logout">Log Out</a></li>
+
+</ul>
+</li>
+
+<h1>{{.PageTitle}}</h1>
+
+<h1><span id="usernameError" class="pure-form-message-inline">Welcome {{.username}}</span></h1>
+<h1>Go ahead and Submit Request</h1>
+
+  <form action="/restapi/disasterrecovery/request" method="POST" class="pure-form pure-form-aligned">
+    <fieldset>
+
+      <div class="form-group row">
+
+        <label class="col-2 col-form-label" for="username">Username</label>
+        <input class="form-control" id="username" type="text" placeholder="Username" name="username" value="{{.username}}">
+
+      </div>
+
+
+      <div class="form-group row">
+
+        <label class="col-2 col-form-label" for="category">Category</label>
+        <input class="form-control" id="category" type="text" placeholder="ex, cleaner," name="category" value="{{.category}}">
+
+      </div>
+
+
+      <div class="form-group row">
+
+        <label class="col-2 col-form-label" for="city">City</label>
+        <input class="form-control" id="city" type="text" placeholder="City" name="city" value="{{.city}}">
+
+      </div>
+
+
+      <div class="form-group row">
+
+        <label class="col-2 col-form-label" for="address">Address</label>
+        <input class="form-control" id="address" type="text" placeholder="address" name="address" value="{{.address}}">
+
+      </div>
+
+      <div class="pure-controls">
+        <input class="pure-button pure-button-primary" type="submit" value="Request" />
+      </div>
+
+    </fieldset>
+  </form>
