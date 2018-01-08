@@ -37,6 +37,78 @@ func (m *MongoDBDatastore) CreateUser(user *models.User) error {
 	return nil
 }
 
+func (m *MongoDBDatastore) CreateHelper(user *models.User) error {
+
+	session := m.Copy()
+
+	defer session.Close()
+	userCollection := session.DB("cityrescue").C("helper")
+	err := userCollection.Insert(user)
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func (m *MongoDBDatastore) CreatePost(post *models.Post) error {
+
+	session := m.Copy()
+
+	defer session.Close()
+	userCollection := session.DB("cityrescue").C("post")
+	err := userCollection.Insert(post)
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func (m *MongoDBDatastore) GetAllPost() (*[]models.Post, error) {
+	posts := []models.Post{}
+	session := m.Copy()
+	defer session.Close()
+	postCollection := session.DB("cityrescue").C("post")
+	err := postCollection.Find(bson.M{}).All(&posts)
+	if err != nil {
+		return nil, err
+
+	}
+
+	return &posts, nil
+
+}
+
+func (m *MongoDBDatastore) GetPost(username string) (*[]models.Post, error) {
+	posts := []models.Post{}
+	session := m.Copy()
+	defer session.Close()
+	postCollection := session.DB("cityrescue").C("post")
+	err := postCollection.Find(bson.M{"username": username}).All(&posts)
+	if err != nil {
+		return nil, err
+
+	}
+
+	return &posts, nil
+
+}
+
+func (m *MongoDBDatastore) GetHelper(username string) (*models.User, error) {
+
+	session := m.Copy()
+	defer session.Close()
+	userCollection := session.DB("cityrescue").C("helper")
+	u := models.User{}
+	err := userCollection.Find(bson.M{"username": username}).One(&u)
+	if err != nil {
+		return nil, err
+	}
+	return &u, nil
+
+}
+
 func (m *MongoDBDatastore) GetUser(username string) (*models.User, error) {
 
 	session := m.Copy()

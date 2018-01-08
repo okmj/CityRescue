@@ -1,4 +1,23 @@
+<html>
+<head>
+<title>CityRescue - {{.PageTitle}}</title>
+<link rel="stylesheet" type="text/css" href="/static/css/pure.css" />
+<link rel="stylesheet" type="text/css" href="/static/css/cityrescue.css" />
+<link  href="https://fonts.googleapis.com/css?family=Lobster:regular" rel="stylesheet" type="text/css" >
+</head>
+<body>
 
+<div id="sitelogo">CityRescue</div>
+
+<div id="navigationBar">
+<ul>
+	<li><a href="/home">Home</a></li>
+	<li><a href="/about">About</a></li>
+	<li><a href="/contactus">Contact Us</a></li>
+	<li id="logout_item"><a href="/signup">Sign Up</a></li>
+
+</ul>
+</li>
 
 	<div class="formContainer">
 	<form action="/login" method="POST" class="pure-form pure-form-aligned">
@@ -15,6 +34,14 @@
 				<input id="password" type="password" placeholder="Password" name="password" value="">
 				<span id="passwordError" class="pure-form-message-inline">{{.Errors.passwordError}}</span>
 			</div>
+			<br>
+
+			<div class="form-group row">
+				<label class="col-2 col-form-label" for="type">Login As</label>
+				<input id="type"type="radio" name="type" value="helper">Helper
+				<input id="type"type="radio" name="type" value="victim">Victim
+			</div>
+			<br>
 
 			<div class="pure-controls">
 				<input class="pure-button pure-button-primary" type="submit" value="Log In" />

@@ -55,6 +55,33 @@ func (m *MySQLDS) CreateUser(user *models.User) error {
 	return nil
 }
 
+//We do not blow out the implementation of CreatePost on MySQL Database
+func (m *MySQLDS) CreatePost(post *models.Post) error {
+
+	return nil
+}
+
+func (m *MySQLDS) CreateHelper(user *models.User) error {
+
+	return nil
+}
+
+func (m *MySQLDS) GetHelper(username string) (*models.User, error) {
+
+	return nil, nil
+}
+func (m *MySQLDS) GetAllPost() (*[]models.Post, error) {
+
+	return nil, nil
+
+}
+
+func (m *MySQLDS) GetPost(username string) (*[]models.Post, error) {
+
+	return nil, nil
+
+}
+
 func (m *MySQLDS) GetUser(username string) (*models.User, error) {
 
 	stmt, err := m.Prepare("SELECT uuid, username, first_name, last_name, email, password_hash, UNIX_TIMESTAMP(created_ts), UNIX_TIMESTAMP(updated_ts) FROM user WHERE username = ?")

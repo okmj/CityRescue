@@ -1,6 +1,7 @@
 package authenticate
 
 import (
+	"fmt"
 	"log"
 	"net/http"
 	"os"
@@ -12,9 +13,9 @@ import (
 
 var SessionStore *sessions.FilesystemStore
 
+//Here is where you create a session
 func CreateUserSession(u *models.User, sessionID string, w http.ResponseWriter, r *http.Request) error {
-
-	gfSession, err := SessionStore.Get(r, "gopherface-session")
+	gfSession, err := SessionStore.Get(r, "cityrescue-session")
 
 	if err != nil {
 		log.Print(err)
@@ -35,19 +36,9 @@ func CreateUserSession(u *models.User, sessionID string, w http.ResponseWriter, 
 	return nil
 }
 
-func ExpireUserSession(w http.ResponseWriter, r *http.Request) {
-	gfSession, err := SessionStore.Get(r, "gopherface-session")
-
-	if err != nil {
-		log.Print(err)
-	}
-
-	gfSession.Options.MaxAge = -1
-	gfSession.Save(r, w)
-}
-
 func init() {
 
-	SessionStore = sessions.NewFilesystemStore("/tmp/gopherface-sessions", []byte(os.Getenv("GOPHERFACE_HASH_KEY")))
-
+	SessionStore = sessions.NewFilesystemStore("", []byte(os.Getenv("CITYRESCUE_HASH_KEY")))
+	fmt.Println([]byte(os.Getenv("CITYRESCUE_HASH_KEY")))
+	fmt.Println(os.Getenv("CITYRESCUE_HASH_KEY"))
 }

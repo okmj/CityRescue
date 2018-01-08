@@ -6,7 +6,6 @@ import (
 	"log"
 	"net/http"
 	"os"
-	ttemplate "text/template"
 )
 
 // Template rendering function
@@ -18,12 +17,22 @@ func RenderTemplate(w http.ResponseWriter, templateFile string, templateData int
 	t.Execute(w, templateData)
 }
 
+/*
 func RenderUnsafeTemplate(w http.ResponseWriter, templateFile string, templateData interface{}) {
 	t, err := ttemplate.ParseFiles(templateFile)
 	if err != nil {
 		log.Printf("Error encountered while parsing the template: %v  ", err)
 	}
 	w.Header().Set("X-XSS-Protection", "0")
+	t.Execute(w, templateData)
+}
+*/
+
+func RenderGatedTemplate(w http.ResponseWriter, templateFile string, templateData interface{}) {
+	t, err := template.ParseFiles(templateFile, "./views/gatedheader.html", "./views/footer.html")
+	if err != nil {
+		log.Printf("Error encountered while parsing the template: ")
+	}
 	t.Execute(w, templateData)
 }
 

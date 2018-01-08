@@ -115,15 +115,28 @@ func ProcessSignUpForm(w http.ResponseWriter, r *http.Request, s *SignUpForm, en
 	//fmt.Println("Here where the error occured")
 	fmt.Println(env)
 
-	err := env.DB.CreateUser(u)
+	fmt.Println("SignUp Type : ", r.FormValue("type"))
 
-	if err != nil {
-		//fmt.Println("Here where the error occured")
-		log.Print(err)
+	if "victim" == r.FormValue("type") {
+		err := env.DB.CreateUser(u)
 
+		if err != nil {
+			fmt.Println("Database Collection Not Found")
+			log.Print(err)
+
+		}
+
+	} else {
+		err := env.DB.CreateHelper(u)
+
+		if err != nil {
+			fmt.Println("Database Collection Not Found")
+			log.Print(err)
+
+		}
 	}
 
-	user, err := env.DB.GetUser("kruti")
+	user, err := env.DB.GetUser(r.FormValue("username"))
 	if err != nil {
 		log.Print(err)
 	} else {

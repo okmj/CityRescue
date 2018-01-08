@@ -1,6 +1,7 @@
 package authenticate
 
 import (
+	"fmt"
 	"log"
 	"net/http"
 	"os"
@@ -9,6 +10,7 @@ import (
 	"github.com/okeyonyia123/cityrescue/models"
 
 	"github.com/gorilla/securecookie"
+	"github.com/subosito/gotenv"
 )
 
 var hashKey []byte
@@ -42,14 +44,17 @@ func CreateSecureCookie(u *models.User, sessionID string, w http.ResponseWriter,
 }
 
 func ReadSecureCookieValues(w http.ResponseWriter, r *http.Request) (map[string]string, error) {
-	if cookie, err := r.Cookie("session"); err == nil {
+	if cookie, err := r.Cookie("cityrescue-session"); err == nil {
 		value := make(map[string]string)
-		if err = s.Decode("session", cookie.Value, &value); err == nil {
+
+		if err = s.Decode("cityrescue-session", cookie.Value, &value); err == nil {
+			fmt.Println("Found Erroor!!!!!!!!!!!!!!!")
 			return value, nil
 		} else {
 			return nil, err
 		}
 	} else {
+		fmt.Printf("here!!!!!!!!!")
 		return nil, nil
 	}
 }
@@ -57,7 +62,7 @@ func ReadSecureCookieValues(w http.ResponseWriter, r *http.Request) (map[string]
 func ExpireSecureCookie(w http.ResponseWriter, r *http.Request) {
 
 	cookie := &http.Cookie{
-		Name:   "session",
+		Name:   "cityrescue-session",
 		Value:  "",
 		Path:   "/",
 		MaxAge: -1,
@@ -72,9 +77,14 @@ func ExpireSecureCookie(w http.ResponseWriter, r *http.Request) {
 }
 
 func init() {
+	gotenv.Load()
 
-	hashKey = []byte(os.Getenv("GOPHERFACE_HASH_KEY"))
-	blockKey = []byte(os.Getenv("GOPHERFACE_BLOCK_KEY"))
+	log.Println(os.Getenv("CITYRESCUE_HASH_KEY"))
+	log.Println(os.Getenv("CITYRESCUE_BLOCK_KEY"))
+	//For authenticating the Cookie Values
+	hashKey = []byte(os.Getenv("CITYRESCUE_HASH_KEY"))
+	//for encrypting the cookie values
+	blockKey = []byte(os.Getenv("CITYRESCUE_BLOCK_KEY"))
 
 	s = securecookie.New(hashKey, blockKey)
 }
